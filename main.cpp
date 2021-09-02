@@ -77,51 +77,67 @@ double f(double x, double y) {
 
 void q2 () {
 
-  int N = 4;
+  int N = 8;
+
   double u_atx0 = 0;
   double u_atx1 = 0;
-  double u_aty0 = 0;
-  double u_aty1 = 0;
+  double u_at0y = 0;
+  double u_at1y = 0;
 
   double x = 1.0/N;
+  double y = 1.0/N;
   int tamM = (N-1)*(N-1);
   vector<vector<double>> M(tamM, vector<double>(tamM));
-  vector<double> v(tamM), y(tamM);
+  vector<double> v(tamM), u(tamM);
 
   for (int i = 0; i < tamM; i++) {
 
-    M[i][i] = -2.0*(2.0/(x*x));
+    v[i] = f(i,i);
+
+    M[i][i] = -2.0*(1.0/(x*x) + 1.0/(y*y));
+
     if (i%(N-1) != 0) {
       M[i][i-1] = 1/(x*x);
-    }
-    if (i%(N-1) != 2) {
-      M[i][i+1] = 1/(x*x);
-    }
-    if (i > N-2) {
-      M[i][i-N+1] = 1/(x*x);
-    }
-    if (i < tamM-N+1) {
-      M[i][i+N-1] = 1/(x*x);
+    } else {
+      v[i] -= u_at0y/(x*x);
     }
 
-    v[i] = f(i,i);
+    if (i%(N-1) != (N-2)) {
+      M[i][i+1] = 1/(x*x);
+    } else {
+      v[i] -= u_at1y/(x*x);
+    }
+
+    if (i > N-2) {
+      M[i][i-N+1] = 1/(y*y);
+    } else {
+      v[i] -= u_atx0/(y*y);
+    }
+
+    if (i < tamM-N+1) {
+      M[i][i+N-1] = 1/(y*y);
+    } else {
+      v[i] -= u_atx1/(y*y);
+    }
 
   }
 
 
-  y = eliminacaoDeGauss(tamM, M, v);
+  u = eliminacaoDeGauss(tamM, M, v);
 
   cout << "Soluções:\n";
 
   for (int i = 0; i < tamM; i++) {
-    cout << "y_" << i+1 << ": " << y[i] << "\n";
+    int r = (i+1)%(N-1);
+    if (r==0) {r=7;}
+    cout << "u_" << i+1 << " = u(" << 1+i/(N-1) << ", " << r << "): " << u[i] << "\n";
   }
 
 }
 
 int main() {
 
-  int num_questao = 2;
+  int num_questao = 1;
 
   if (num_questao == 1) {
     q1();
