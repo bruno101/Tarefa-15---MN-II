@@ -137,7 +137,7 @@ void q2 () {
 
 int main() {
 
-  int num_questao = 1;
+  int num_questao = 2;
 
   if (num_questao == 1) {
     q1();
